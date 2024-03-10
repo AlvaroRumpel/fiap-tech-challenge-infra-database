@@ -35,10 +35,13 @@ jobs:
         id: import_db_subnet
         continue-on-error: true
         run: |
-          if aws rds describe-db-subnet-groups --db-subnet-group-name "db-subnet" &>/dev/null; then
-            terraform import aws_db_subnet_group.db_subnet db-subnet
+          OUTPUT=$(aws rds describe-db-subnet-groups --db-subnet-group-name "db-subnet")
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -q 'DBSubnetGroupName'; then
+              echo "DB Subnet Group exist."
+              terraform import aws_db_subnet_group.db_subnet db-subnet
           else
-            echo "DB Subnet Group does not exist, will be created."
+              echo "DB Subnet Group does not exist, will be created."
           fi
 
       - name: Terraform Apply
