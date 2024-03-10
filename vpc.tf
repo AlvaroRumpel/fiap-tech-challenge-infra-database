@@ -29,7 +29,7 @@ data "aws_subnet" "existing_subnet_b" {
 
 
 resource "aws_subnet" "subnet_a" {
-  count      = length(data.aws_subnet.existing_subnet_a.ids) > 0 ? 0 : 1
+  count      = length(data.aws_subnet.existing_subnet_a) > 0 ? 0 : 1
   vpc_id     = data.aws_vpc.existing_vpc.id != null ? data.aws_vpc.existing_vpc.id : aws_vpc.vpc.id
   cidr_block = "10.0.1.0/24"
   availability_zone = "us-east-2a"
@@ -40,7 +40,7 @@ resource "aws_subnet" "subnet_a" {
 }
 
 resource "aws_subnet" "subnet_b" {
-  count      = length(data.aws_subnet.existing_subnet_b.ids) > 0 ? 0 : 1
+  count      = length(data.aws_subnet.existing_subnet_b) > 0 ? 0 : 1
   vpc_id     = data.aws_vpc.existing_vpc.id != null ? data.aws_vpc.existing_vpc.id : aws_vpc.vpc.id
   cidr_block = "10.0.2.0/24"
   availability_zone = "us-east-2b"
