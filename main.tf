@@ -4,86 +4,32 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-}
-
 locals {
   cluster_name = "fiap-tech-challenge-infra-db"
 }
 
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
+resource "aws_db_instance" "db" {
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t2.micro"
+  db_name              = "db"
+  username             = "dbuser"
+  password             = var.db_password
+  parameter_group_name = "default.mysql5.7"
+  
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  db_subnet_group_name = aws_db_subnet_group.db_subnet.name
+
+  skip_final_snapshot     = true
 }
 
-module "eks-kubeconfig" {
-  source     = "hyperbadger/eks-kubeconfig/aws"
-  version    = "1.0.0"
+resource "aws_db_subnet_group" "db_subnet" {
+  name       = "db-subnet"
+  subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
 
-  depends_on = [module.eks]
-  cluster_id =  module.eks.cluster_id
-  }
-
-resource "local_file" "kubeconfig" {
-  content  = module.eks-kubeconfig.kubeconfig
-  filename = "kubeconfig_${local.cluster_name}"
-}
-
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.0.0"
-
-  name                 = "database-vpc"
-  cidr                 = "172.17.0.0/16"
-  azs                  = data.aws_availability_zones.available.names
-  private_subnets      = ["172.17.1.0/24", "172.17.2.0/24", "172.17.3.0/24"]
-  public_subnets       = ["172.17.4.0/24", "172.17.5.0/24", "172.17.6.0/24"]
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
-
-  public_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = "1"
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"             = "1"
-  }
-}
-
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "18.30.3"
-
-  cluster_name    = "${local.cluster_name}"
-  cluster_version = "1.25"
-  subnet_ids      = module.vpc.private_subnets
-
-  vpc_id = module.vpc.vpc_id
-
-  eks_managed_node_groups = {
-    first = {
-      desired_capacity = 1
-      max_capacity     = 10
-      min_capacity     = 1
-
-      instance_type = "t3.micro"
-    }
-
-    second = {
-      desired_capacity = 1
-      max_capacity     = 10
-      min_capacity     = 1
-
-      instance_type = "t3.micro"
-    }
+  tags = {
+    Name = "DB Subnet Group"
   }
 }
