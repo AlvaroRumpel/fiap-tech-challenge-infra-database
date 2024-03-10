@@ -39,7 +39,7 @@ jobs:
       - name: Terraform Apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
-          DB_PASSWOD: ${{ secrets.DB_PASSWORD }}
+          TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
         id: apply
         run: terraform apply -auto-approve
         continue-on-error: true
