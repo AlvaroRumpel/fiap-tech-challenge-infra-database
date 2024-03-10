@@ -3,10 +3,7 @@ data "aws_vpc" "existing_vpc" {
     name   = "tag:Name"
     values = ["rds-vpc"]
   }
-
-  depends_on = [aws_vpc.vpc]
 }
-
 
 resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
