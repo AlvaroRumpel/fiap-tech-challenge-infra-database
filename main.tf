@@ -9,7 +9,7 @@ locals {
 }
 
 resource "aws_db_instance" "db" {
-  allocated_storage    = 20
+  allocated_storage    = 5
   storage_type         = "gp2"
   engine               = "mysql"
   engine_version       = "5.7"
