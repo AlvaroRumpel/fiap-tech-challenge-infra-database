@@ -31,6 +31,16 @@ jobs:
         id: plan
         run: terraform plan -no-color
 
+      - name: Import DB Subnet Group if exists or continue
+        id: import_db_subnet
+        continue-on-error: true
+        run: |
+          if aws rds describe-db-subnet-groups --db-subnet-group-name "db-subnet" &>/dev/null; then
+            terraform import aws_db_subnet_group.db_subnet db-subnet
+          else
+            echo "DB Subnet Group does not exist, will be created."
+          fi
+
       - name: Terraform Apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
