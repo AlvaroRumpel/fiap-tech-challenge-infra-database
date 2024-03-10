@@ -30,7 +30,6 @@ jobs:
         if: github.event_name == 'pull_request'
         id: plan
         run: terraform plan -no-color
-        continue-on-error: true
 
       - name: Terraform Apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -38,4 +37,3 @@ jobs:
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
         id: apply
         run: terraform apply -auto-approve
-        continue-on-error: true
