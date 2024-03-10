@@ -84,6 +84,6 @@ jobs:
           cd ./kubernetes/mysql
           kubectl apply -f secrets.yaml
           envsubst < mysql-deployment.yaml | kubectl apply -f -
-          kubectl apply -f mysql-hpa.yaml
+          kubectl apply -f mysql-pv.yaml
           kubectl apply -f mysql-svc.yaml
           kubectl rollout restart deployment mysql-deployment
