@@ -28,6 +28,8 @@ jobs:
 
       - name: Terraform Validate
         id: validate
+        env:
+          TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
         run: terraform validate -no-color
 
       - name: Terraform Plan
