@@ -27,7 +27,7 @@ resource "aws_db_instance" "db" {
 
 resource "aws_db_subnet_group" "db_subnet" {
   name       = "db-subnet"
-  subnet_ids = [length(data.aws_subnet.existing_subnet_a) > 0 ? data.aws_subnet.existing_subnet_a[0].id : aws_subnet.subnet_a.id, length(data.aws_subnet.existing_subnet_b) > 0 ? data.aws_subnet.existing_subnet_b[0].id : aws_subnet.subnet_b.id]
+  subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
 
   tags = {
     Name = "DB Subnet Group"
