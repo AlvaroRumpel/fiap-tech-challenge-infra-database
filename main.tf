@@ -8,6 +8,10 @@ locals {
   cluster_name = "fiap-tech-challenge-infra-db"
 }
 
+resource "aws_default_subnet" "def_subnet" {
+    availability_zone = "us-east-1a"
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.0.0"
