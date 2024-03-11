@@ -18,32 +18,16 @@ resource "aws_default_subnet" "def_subnet" {
     availability_zone = "us-east-2a"
 }
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.0.0"
+resource "aws_vpc" "vpc" {
+  cidr_block = "10.0.0.0/16"
 
-  name                 = "rds-vpc"
-  cidr                 = "10.0.0.0/16"
-  azs                  = data.aws_availability_zones.available.names
-  private_subnets      = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets       = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
-
-  public_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = "1"
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"             = "1"
+  tags = {
+    Name = "rds-vpc"
   }
 }
 
 resource "aws_subnet" "subnet_a" {
-  vpc_id = module.vpc.vpc_id
+  vpc_id     = aws_vpc.vpc.id
   cidr_block = "10.0.1.0/24"
   availability_zone = "us-east-2a"
 
@@ -53,7 +37,7 @@ resource "aws_subnet" "subnet_a" {
 }
 
 resource "aws_subnet" "subnet_b" {
-  vpc_id = module.vpc.vpc_id
+  vpc_id     = aws_vpc.vpc.id
   cidr_block = "10.0.2.0/24"
   availability_zone = "us-east-2b"
 
@@ -65,7 +49,7 @@ resource "aws_subnet" "subnet_b" {
 resource "aws_security_group" "rds_sg" {
   name_prefix = "rds-"
 
-  vpc_id = module.vpc.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
   ingress {
     from_port   = 3306
@@ -74,6 +58,7 @@ resource "aws_security_group" "rds_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 
 resource "aws_db_instance" "db" {  
 
