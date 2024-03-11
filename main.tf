@@ -65,7 +65,7 @@ resource "aws_route" "routetointernet" {
 
 
 resource "aws_route_table_association" "pub_association" {
-  subnet_ids = ["${aws_subnet.rds_subnet.id}","${aws_subnet.rds_subnet1.id}"]
+  subnet_id      = aws_subnet.rds_subnet.id
   route_table_id = aws_route_table.rt.id
 }
 
