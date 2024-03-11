@@ -14,16 +14,20 @@ resource "aws_default_vpc" "default" {
     }
 }
 
-resource "aws_subnet" "rds_subnet_a" {
-  vpc_id     = aws_vpc.aws_default_vpc.id
-  cidr_block = "10.0.1.0/24"
+resource "aws_default_subnet" "default_subnet_a" {
   availability_zone = "us-east-2a"
+
+  tags = {
+    Name = "Default subnet for us-east-2a"
+  }
 }
 
-resource "aws_subnet" "rds_subnet_b" {
-  vpc_id     = aws_vpc.aws_default_vpc.id
-  cidr_block = "10.0.2.0/24"
+resource "aws_default_subnet" "default_subnet_b" {
   availability_zone = "us-east-2b"
+
+  tags = {
+    Name = "Default subnet for us-east-2b"
+  }
 }
 
 resource "aws_security_group" "rds_sg" {
