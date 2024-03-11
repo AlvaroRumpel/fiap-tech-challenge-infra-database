@@ -8,38 +8,34 @@ locals {
   cluster_name = "fiap-tech-challenge-infra-db"
 }
 
-resource "aws_vpc" "vpc" {
-  cidr_block = "10.0.0.0/16"
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.0.0"
 
-  tags = {
-    Name = "rds-vpc"
+  name                 = "rds-vpc"
+  cidr                 = "172.16.0.0/16"
+  azs                  = data.aws_availability_zones.available.names
+  private_subnets      = ["172.16.1.0/24", "172.16.2.0/24", "172.16.3.0/24"]
+  public_subnets       = ["172.16.4.0/24", "172.16.5.0/24", "172.16.6.0/24"]
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
+  enable_dns_hostnames = true
+
+  public_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = "1"
   }
-}
 
-resource "aws_subnet" "subnet_a" {
-  vpc_id     = aws_vpc.vpc.id
-  cidr_block = "10.0.1.0/24"
-  availability_zone = "us-east-1a"
-
-  tags = {
-    Name: "subnet-a-rds-vpc"
-  }
-}
-
-resource "aws_subnet" "subnet_b" {
-  vpc_id     = aws_vpc.vpc.id
-  cidr_block = "10.0.2.0/24"
-  availability_zone = "us-east-1b"
-
-  tags = {
-    Name: "subnet-b-rds-vpc"
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
   }
 }
 
 resource "aws_security_group" "rds_sg" {
   name_prefix = "rds-"
 
-  vpc_id = aws_vpc.vpc.id
+  vpc_id = module.vpc.vpc_id
 
   ingress {
     from_port   = 3306
