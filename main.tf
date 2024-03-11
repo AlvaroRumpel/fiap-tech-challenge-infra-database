@@ -8,15 +8,6 @@ locals {
   cluster_name = "fiap-tech-challenge-infra-db"
 }
 
-resource "aws_security_group" "db" {
-  name_prefix = "db-"
-  ingress {
-    from_port   = 0
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
 
 resource "aws_db_instance" "db" {  
 
@@ -29,7 +20,7 @@ resource "aws_db_instance" "db" {
   publicly_accessible    = true
   username             = "dbuser"
   password             = var.db_password
-  vpc_security_group_ids = [aws_security_group.db.id]
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
   skip_final_snapshot    = true
 
   tags = {
