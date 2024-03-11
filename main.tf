@@ -22,26 +22,6 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-resource "aws_subnet" "subnet_a" {
-  vpc_id     = aws_vpc.vpc.id
-  cidr_block = "10.0.1.0/24"
-  availability_zone = "us-east-2a"
-
-  tags = {
-    Name: "subnet-a-rds-vpc"
-  }
-}
-
-resource "aws_subnet" "subnet_b" {
-  vpc_id     = aws_vpc.vpc.id
-  cidr_block = "10.0.2.0/24"
-  availability_zone = "us-east-2b"
-
-  tags = {
-    Name: "subnet-b-rds-vpc"
-  }
-}
-
 resource "aws_security_group" "rds_sg" {
   name_prefix = "rds-"
 
@@ -53,6 +33,23 @@ resource "aws_security_group" "rds_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+resource "aws_subnet" "rds_subnet" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+  availability_zone = "us-east-2a"
+}
+
+resource "aws_subnet" "rds_subnet1" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "us-east-2b"
+}
+
+resource "aws_db_subnet_group" "rdssubnet" {
+  name       = "database subnet"
+  subnet_ids = ["${aws_subnet.rds_subnet.id}","${aws_subnet.rds_subnet1.id}"]
 }
 
 
@@ -68,6 +65,8 @@ resource "aws_db_instance" "db" {
   username             = "dbuser"
   password             = var.db_password
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  db_subnet_group_name   = aws_db_subnet_group.rdssubnet.name
+
   skip_final_snapshot    = true
 
   tags = {
