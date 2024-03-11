@@ -19,7 +19,7 @@ resource "aws_db_instance" "db" {
   publicly_accessible    = true
   username             = "dbuser"
   password             = var.db_password
-  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  vpc_security_group_ids = [aws_security_group.db.id]
   skip_final_snapshot    = true
 
   tags = {
