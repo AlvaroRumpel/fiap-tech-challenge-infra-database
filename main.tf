@@ -8,6 +8,16 @@ locals {
   cluster_name = "fiap-tech-challenge-infra-db"
 }
 
+resource "aws_security_group" "db" {
+  name_prefix = "db-"
+  ingress {
+    from_port   = 0
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_db_instance" "db" {  
 
   storage_type           = "gp2"
