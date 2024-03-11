@@ -18,7 +18,25 @@ resource "aws_default_subnet" "def_subnet" {
     availability_zone = "us-east-2a"
 }
 
+resource "aws_subnet" "subnet_a" {
+  vpc_id     = aws_vpc.vpc.id
+  cidr_block = "10.0.1.0/24"
+  availability_zone = "us-east-2a"
 
+  tags = {
+    Name: "subnet-a-rds-vpc"
+  }
+}
+
+resource "aws_subnet" "subnet_b" {
+  vpc_id     = aws_vpc.vpc.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "us-east-2b"
+
+  tags = {
+    Name: "subnet-b-rds-vpc"
+  }
+}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
