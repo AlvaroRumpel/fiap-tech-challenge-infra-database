@@ -14,10 +14,6 @@ resource "aws_default_vpc" "default" {
     }
 }
 
-resource "aws_default_subnet" "def_subnet" {
-    availability_zone = "us-east-2a"
-}
-
 resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
 
