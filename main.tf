@@ -22,18 +22,15 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-resource "aws_security_group" "rds_sg" {
-  name_prefix = "rds-"
-
+resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.vpc.id
 
-  ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  tags = {
+    Name = "main"
   }
 }
+
+
 
 resource "aws_subnet" "rds_subnet" {
   vpc_id     = aws_vpc.vpc.id
@@ -51,6 +48,20 @@ resource "aws_db_subnet_group" "rdssubnet" {
   name       = "database subnet"
   subnet_ids = ["${aws_subnet.rds_subnet.id}","${aws_subnet.rds_subnet1.id}"]
 }
+
+resource "aws_security_group" "rds_sg" {
+  name_prefix = "rds-"
+
+  vpc_id = aws_vpc.vpc.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 
 
 resource "aws_db_instance" "db" {  
@@ -72,4 +83,6 @@ resource "aws_db_instance" "db" {
   tags = {
     Name = "db"
   }
+
+  depends_on = [aws_internet_gateway.gw]
 }
