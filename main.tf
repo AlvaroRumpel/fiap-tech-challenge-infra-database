@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-2"
 }
 
 data "aws_availability_zones" "available" {}
@@ -8,28 +8,65 @@ locals {
   cluster_name = "fiap-tech-challenge-infra-db"
 }
 
-resource "aws_db_instance" "db" {
-  allocated_storage    = 5
-  storage_type         = "gp2"
-  engine               = "mysql"
-  engine_version       = "5.7"
-  instance_class       = "db.t2.micro"
-  db_name              = "db"
-  username             = "dbuser"
-  password             = var.db_password
-  parameter_group_name = "default.mysql5.7"
-  
-  vpc_security_group_ids = [aws_security_group.rds_sg.id]
-  db_subnet_group_name = aws_db_subnet_group.db_subnet.name
-
-  skip_final_snapshot     = true
+resource "aws_default_vpc" "default" {
+    tags = {
+        Name = "Default VPC"
+    }
 }
 
-resource "aws_db_subnet_group" "db_subnet" {
-  name       = "db-subnet"
-  subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+resource "aws_default_subnet" "default_subnet_a" {
+  availability_zone = "us-east-2a"
 
   tags = {
-    Name = "DB Subnet Group"
+    Name = "Default subnet for us-east-2a"
   }
 }
+
+resource "aws_default_subnet" "default_subnet_b" {
+  availability_zone = "us-east-2b"
+
+  tags = {
+    Name = "Default subnet for us-east-2b"
+  }
+}
+
+resource "aws_security_group" "rds_sg" {
+  name = "rds_sg"
+
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_db_instance" "db" {  
+
+  storage_type           = "gp2"
+  engine                 = "mysql"
+  db_name                = "db"
+  identifier             = "db"
+  instance_class         = "db.t2.micro"
+  allocated_storage      = 10
+  publicly_accessible    = true
+  username               = "dbuser"
+  password               = var.db_password
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+
+  skip_final_snapshot    = true
+
+  tags = {
+    Name = "db"
+  }
+
+}
+
+
+
