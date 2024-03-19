@@ -21,5 +21,6 @@ Foi utilizada a nuvem da Amazon (AWS) para este tech challenge:
 13. Copie os valores dos campos "Chave de acesso" e "Chave de acesso secreta";
 14. Na plataforma do Github, acesse o menu "Settings" do projeto, na tela que se abrir, clique no menu Security->Secrets and variables->Actions;
 15. Adicione uma "repository secret" chamada AWS_ACCESS_KEY_ID com o valor copiado de "Chave de acesso", e crie outra "repository secret" chamada AWS_SECRET_ACCESS_KEY com o valor copiado de "Chave de acesso secreta";
-16. Adicione uma "repository secret" chamada DB_PASSWORD com o valor desejado.
+16. Adicione uma "repository secret" chamada DB_PASSWORD com o valor desejado de no mínimo 8 caracteres.
 17. Após isso qualquer commit neste repositório que for para a branch "main", irá subir o RDS;
+
