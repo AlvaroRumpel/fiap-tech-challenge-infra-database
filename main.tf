@@ -53,7 +53,7 @@ resource "aws_db_instance" "db" {
   engine                 = "mysql"
   db_name                = "db"
   identifier             = "db"
-  instance_class         = "db.t2.micro"
+  instance_class         = "db.m5d.large"
   allocated_storage      = 10
   publicly_accessible    = true
   username               = "dbuser"
