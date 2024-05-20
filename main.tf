@@ -52,7 +52,7 @@ resource "aws_db_instance" "db_tech_challenge" {
   storage_type           = "gp2"
   engine                 = "mysql"
   db_name                = "tech_challenge"
-  identifier             = "tech_challenge"
+  identifier             = "tech-challenge"
   instance_class         = "db.m5d.large"
   allocated_storage      = 10
   publicly_accessible    = true
@@ -73,7 +73,7 @@ resource "aws_db_instance" "db_tech_challenge_producao" {
   storage_type           = "gp2"
   engine                 = "mysql"
   db_name                = "tech_challenge_producao"
-  identifier             = "tech_challenge_producao"
+  identifier             = "tech-challenge-producao"
   instance_class         = "db.m5d.large"
   allocated_storage      = 10
   publicly_accessible    = true
@@ -94,7 +94,7 @@ resource "aws_db_instance" "db_tech_challenge_pagamentos" {
   storage_type           = "gp2"
   engine                 = "mysql"
   db_name                = "tech_challenge_pagamentos"
-  identifier             = "tech_challenge_pagamentos"
+  identifier             = "tech-challenge-pagamentos"
   instance_class         = "db.m5d.large"
   allocated_storage      = 10
   publicly_accessible    = true
