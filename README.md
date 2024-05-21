@@ -24,4 +24,3 @@ Foi utilizada a nuvem da Amazon (AWS) para este tech challenge:
 16. Adicione uma "repository secret" chamada DB_PASSWORD com o valor desejado de no mínimo 8 caracteres.
 17. Após isso qualquer commit neste repositório que for para a branch "main", irá subir o RDS;
 
-
